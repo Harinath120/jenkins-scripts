@@ -1,0 +1,41 @@
+HOSTNAME - devopshost.lab1.ariba.com
+
+Jenkins url - http://10.163.0.110:8080
+
+User - ops
+Password - ops
+
+User - admin
+Password - ea9adc0da71945518b760a206f3df3b9
+
+Install java - yum install java-1.8.0-openjdk
+Install webserver - yum install httpd
+Installl jenkins - 
+
+
+To connect to new server - install all 'ssh' plugins
+Goto - system config -> add servers
+Add credentails
+
+
+Change executors
+And try
+
+How to login to cusers - 
+Jvm: -Duser.home=/tmp/jenkins
+
+tr -s ' '  '\n'< infile > outfile
+cut -d " " -f 2- input.txt > output.txt
+
+You can download the JAR file for the client from the URL "/jnlpJars/jenkins-cli.jar" on your Jenkins server, e.g. https://jenkins.example.com/jnlpJars/jenkins-cli.jar
+
+
+ADD Slave node from cli:
+[root@devopshost jenkins]# pwd
+/var/lib/jenkins
+[root@devopshost jenkins]# ls -lart jenkins-cli.jar ^C
+[root@devopshost jenkins]# ls -lart jenkins-cli.jar
+-rw-r--r-- 1 root root 3312061 Aug 13 03:34 jenkins-cli.jar
+
+
+
