@@ -1,0 +1,31 @@
+You can download the JAR file for the client from the URL "/jnlpJars/jenkins-cli.jar" on your Jenkins server, e.g. https://jenkins.example.com/jnlpJars/jenkins-cli.jar
+
+
+ADD Slave node from cli:
+[root@devopshost jenkins]# pwd
+/var/lib/jenkins
+[root@devopshost jenkins]# ls -lart jenkins-cli.jar ^C
+[root@devopshost jenkins]# ls -lart jenkins-cli.jar
+-rw-r--r-- 1 root root 3312061 Aug 13 03:34 jenkins-cli.jar
+
+
+[root@devopshost jenkins]# cat <<EOF | java -jar jenkins-cli.jar -s http://localhost:8080/ create-node app1330 --username admin --password H@rish123
+<slave>
+  <name>app1330.lab1.ariba.com</name>
+  <description></description>
+  <remoteFS>/tmp/jenkins</remoteFS>
+  <numExecutors>5</numExecutors>
+  <mode>NORMAL</mode>
+  <retentionStrategy class="hudson.slaves.RetentionStrategy$Always"/>
+  <launcher class="hudson.plugins.sshslaves.SSHLauncher" plugin="ssh-slaves@1.26">
+    <host>10.163.5.184</host>
+    <port>22</port>
+    <credentialsId>b117d64f-932f-48db-b36c-1f860c4ab1e8</credentialsId>
+<javaPath>/usr/j2sdk1.8.0_74_x86_64/bin/java</javaPath>
+    <maxNumRetries>2</maxNumRetries>
+    <retryWaitTime>1</retryWaitTime>
+  </launcher>
+  <label></label>
+  <nodeProperties/>
+  </slave>
+EOF
