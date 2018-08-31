@@ -1,0 +1,47 @@
+#!/usr/bin/expect
+
+#Usage sshsudologin.expect <host> <ssh user> <ssh password> <su user> <su password>
+
+set timeout 60
+
+spawn ssh C5267086@hydra.lab1.ariba.com
+
+expect "yes/no" {
+        send "yes\r"
+        expect "*?assword" { send "[lindex $argv 0]\r" }
+        } "*?assword" { send "[lindex $argv 0]\r" }
+
+expect "> " { send "p4 login\r"
+              expect "Enter password:" { send "[lindex $argv 1]\r" } }
+
+expect "> " { send "cd ~/ariba/services/operations/safeguard/prod/accounts\r" }
+#expect "> " { send "p4 sync -f ... \r" }
+expect "> " { send "ln -s ../masterAccounts/[lindex $argv 2] [lindex $argv 3]\r" }
+expect "> " { send "p4 add [lindex $argv 3]\r" }
+expect "> " { send " p4 change -o > /tmp/test\r" }
+expect "> " { send "  sed -i '/<enter description here>/d' /tmp/test\r" }
+expect "> " { send " sed  '/^Description:/a  summary'  /tmp/test > /tmp/1\r" }
+expect "> " { send " sed '/summary/a        jira-id'  /tmp/1 > /tmp/2\r" }
+expect "> " { send " sed '/jira-id/a        reviewed by'  /tmp/2 > /tmp/3\r" }
+expect "> " { send "sed  -e 's/summary/summary:safegaurd access/g; s/jira-id/jira-id:[lindex $argv 4]/g; s/reviewed by/reviewed by:bussu,krishna/g;' /tmp/3 > /tmp/4\r" }
+expect "> " { send "sed  's/^summary/ \              summary/;' /tmp/4 > /tmp/5\r" }
+expect "> " { send "sed  's/^jira-id/ \              jira-id/;' /tmp/5 > /tmp/6\r" }
+expect "> " { send "sed  's/^reviewed by/ \              reviewed by/;' /tmp/6 > /tmp/7\r" }
+expect "> " { send "p4 change -i < /tmp/7 > /tmp/output \r" }
+expect "> " { send " i=`cat /tmp/output | awk '{print \$2}'` \r" }
+expect "> " { send " p4 describe \$i \r" }
+expect "> " { send " p4 submit -c \$i \r" }
+expect "> " { send "rm -rf /tmp/1\r" }
+expect "> " { send "rm -rf /tmp/2\r" }
+expect "> " { send "rm -rf /tmp/3\r" }
+expect "> " { send "rm -rf /tmp/4\r" }
+expect "> " { send "rm -rf /tmp/5\r" }
+expect "> " { send "rm -rf /tmp/6\r" }
+expect "> " { send "rm -rf /tmp/7\r" }
+
+interact
+
+
+Command to execute:
+cd /var/lib/jenkins/scripts/
+/usr/bin/expect ./safeguard_access.sh  H@rish123 \&@Ngineni123 development-engineer-rsa i352762 HOA-172199
