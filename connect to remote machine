@@ -1,0 +1,39 @@
+First way:
+node('master') {
+   // adds job parameters within jenkinsfile
+   properties([
+     parameters([
+       stringParam(defaultValue: 'web32.lab1', description: 'isFoo should be false', name: 'hostname'),
+       stringParam(defaultValue: 'svcitg', description: 'isFoo should be false', name: 'user'),
+       stringParam(defaultValue: 'ows', description: 'isFoo should be false', name: 'product'),
+       stringParam(defaultValue: 'Alabaster-98', description: 'isFoo should be false', name: 'build'),
+                       ])
+          ])
+          
+   def host = params.hostname
+   def users = params.user
+   def products = params.product
+   def builds = params.build
+   
+    def remote = [:]
+  remote.name = 'web'
+  //inputhost = userInput.host?:''
+
+  remote.host = "${host}"
+  remote.user = "${users}"
+  remote.password = 'wing1scool'
+  remote.allowAnyHosts = true
+  stage('Remote SSH') {
+    sshCommand remote: remote, command: "cd /home/${users}/${product}/${build}/bin ; pwd"
+    
+  }
+}
+
+..........................................................................................................................................
+
+Second way:
+
+>set parameters with parameterized option under general
+> efine variable 
+   def u = params.user
+>output: echo ${i} or cd /home/${u}
