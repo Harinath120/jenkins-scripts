@@ -1,0 +1,28 @@
+#!/usr/bin/expect
+
+#Usage sshsudologin.expect <host> <ssh user> <ssh password> <su user> <su password>
+
+set timeout 60
+
+spawn ssh [lindex $argv 1]@[lindex $argv 0]
+
+expect "yes/no" {
+        send "yes\r"
+        expect "*?assword" { send "[lindex $argv 2]\r" }
+        } "*?assword" { send "[lindex $argv 2]\r" }
+
+expect "$ " { send "su - [lindex $argv 3]\r" }
+
+expect ": " { send "[lindex $argv 4]\r" }
+
+#expect "$ " { send "ls -ltr\r" }
+expect "$ " { send "cd bin\r" }
+expect "$ " { send "pwd\r" }
+expect "$ " { send "./make-push buyer lq25 SSP.2018.Dev-2086 -nopush -cluster primary \r" }
+expect "Enter master password" { send "BU^rg^LE^rk^IN^gs\r" }
+
+
+interact
+cd /var/lib/jenkins/scripts
+
+/usr/bin/expect  ./make_script.sh 'penguin.lab1.ariba.com' 'C5267086' 'H@rish123' 'rc' 'G3t$maRt'
