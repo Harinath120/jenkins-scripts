@@ -1,3 +1,4 @@
+MAKE deployment using BASH
 #!/usr/bin/expect
 
 #Usage sshsudologin.expect <host> <ssh user> <ssh password> <su user> <su password>
@@ -26,3 +27,59 @@ interact
 cd /var/lib/jenkins/scripts
 
 /usr/bin/expect  ./make_script.sh 'penguin.lab1.ariba.com' 'C5267086' 'H@rish123' 'rc' 'G3t$maRt'
+
+................................................................................................................
+
+MAKE deployment using jenkins pipeline
+
+timeout(time: 1, unit: 'HOURS') {
+node ('penguin') {
+
+	stage ('make - Build') {
+               
+            def workspace = pwd()
+            echo "${workspace}"   
+            withCredentials([string(credentialsId: 'mp', variable: 'master')], ) {
+            	     sh """
+            	     echo ${master} | /home/rc/bin/make-push dms lq10 DMSRel-829
+            	     """
+}
+
+            
+        }
+               
+        } 	
+	}
+......................................................................................................................................
+
+Using jenkins pipeline and supply values from parameter
+
+timeout(time: 1, unit: 'HOURS') {
+node ('penguin') {
+    properties([
+     parameters([
+       stringParam(defaultValue: 'dms', description: 'isFoo should be false', name: 'product'),
+       stringParam(defaultValue: 'DMSRel-832', description: 'isFoo should be false', name: 'build'),
+       stringParam(defaultValue: 'lq2', description: 'isFoo should be false', name: 'service'),
+                              ])
+          ])
+
+        def products = params.product
+        def builds = params.build
+        def services = params.service
+	stage ('make - Build') {
+               
+            def workspace = pwd()
+            echo "${workspace}"   
+            withCredentials([string(credentialsId: 'mp', variable: 'master')], ) {
+            	     sh """
+            	     echo ${master} | /home/rc/bin/make-push ${products} ${services} ${builds}
+            	     """
+		
+}
+
+            
+        }
+               
+        } 	
+	}
