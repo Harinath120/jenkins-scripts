@@ -83,3 +83,45 @@ node ('penguin') {
                
         } 	
 	}
+
+..................................................................................................................................
+MAKE - PUSH
+
+timeout(time: 1, unit: 'HOURS') {
+node ('penguin') {
+    properties([
+     parameters([
+       stringParam(defaultValue: 'dms', description: 'isFoo should be false', name: 'product'),
+       stringParam(defaultValue: 'DMSRel-832', description: 'isFoo should be false', name: 'build'),
+       stringParam(defaultValue: 'lq2', description: 'isFoo should be false', name: 'service'),
+                              ])
+          ])
+
+        def products = params.product
+        def builds = params.build
+        def services = params.service
+	stage ('make deployment') {
+               
+            def workspace = pwd()
+            echo "${workspace}"   
+            
+            	     sh """
+            	     /home/rc/bin/make-push ${products} ${services} ${builds} -nopush
+            	     """
+		           
+        }
+    stage ('push deployment'){
+        
+        def workspace = pwd()
+            echo "${workspace}"   
+            withCredentials([string(credentialsId: 'mp', variable: 'master')], ) {
+            	     sh """
+            	     echo ${master} | /home/rc/bin/make-push ${products} ${services} ${builds} -nomake
+            	     """
+		
+        
+    }
+               
+        } 	
+	}
+}
