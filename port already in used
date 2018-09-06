@@ -1,0 +1,41 @@
+package org.hidetake.groovy.ssh.session
+
+import groovy.transform.CompileStatic
+
+
+node('master') {
+   // adds job parameters within jenkinsfile
+   properties([
+     parameters([
+       stringParam(defaultValue: 'web33.lab1', description: 'isFoo should be false', name: 'hostname'),
+       stringParam(defaultValue: 'svcload3', description: 'isFoo should be false', name: 'us'),
+       stringParam(defaultValue: 'ows', description: 'isFoo should be false', name: 'product'),
+       stringParam(defaultValue: 'Alabaster-98', description: 'isFoo should be false', name: 'build'),
+                       ])
+          ])
+          
+   def host = params.hostname
+   def user = params.us
+   def products = params.product
+   def builds = params.build
+   
+   echo "${host}"
+   echo "${user}"
+   echo "${products}"
+   echo "${builds}"
+   
+    def remote = [:]
+  remote.name = 'web'
+  remote.host = "${host}"
+  remote.user = "${user}"
+  remote.password = 'k@b@di$vcdev'
+  remote.allowAnyHosts = true
+  stage('Remote SSH') {
+  
+    sshCommand remote: remote, command: "ps aux | grep -i /home/${user}/${products}/${builds}/bin  | grep -v grep  | awk '{print \$2}' | xargs  kill -9 ; echo \$? > /tmp/2  "
+  
+
+   
+     
+  }
+}
