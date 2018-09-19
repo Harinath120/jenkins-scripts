@@ -1,0 +1,26 @@
+node('hydra'){
+    properties([
+     parameters([stringParam(defaultValue: 'app1425.lab1.ariba.com', description: 'which needs to be restart', name: 'hostname'),])])
+
+    stage('hardware info'){
+    def host = params.hostname
+     touch file: 'outFile', timestamp: 0
+        sh """
+        
+        cat /home/C5267086/ariba/services/operations/machinedb/lab1.ariba.com/${host} | grep -i hardwarevendor | cut -d\':\' -f2 | tr -d \'  \' > outFile
+                    """
+        def hwv = readFile 'outFile'
+            echo "${hwv}"
+          if (hwv.trim().equals("hp")) {
+                echo "vendor is hp"
+            } else {
+                echo "vendor is not hp"
+            }
+            
+           
+}  
+
+              
+    }
+    
+    
