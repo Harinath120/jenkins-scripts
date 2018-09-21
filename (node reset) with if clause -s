@@ -1,9 +1,12 @@
 node('hydra'){
     properties([
-     parameters([stringParam(defaultValue: 'app1425.lab1.ariba.com', description: 'which needs to be restart', name: 'hostname'),])])
+     parameters([stringParam(defaultValue: 'app1425.lab1.ariba.com', description: 'Enter fully qualified domain name Ex:app**.lab1.ariba.com', name: 'hostname'),
+     stringParam(defaultValue: '', description: 'Enter ticket details Ex:HOA-0000', name: 'ticket'),])])
 
     stage('hardware info'){
+        //input message: 'yes', parameters: [string(defaultValue: 'yes', description: '', name: 'yes', trim: false)]
     def host = params.hostname
+    
      touch file: 'outFile', timestamp: 0
         sh """
         
@@ -11,16 +14,57 @@ node('hydra'){
                     """
         def hwv = readFile 'outFile'
             echo "${hwv}"
-          if (hwv.trim().equals("hp")) {
-                echo "vendor is hp"
-            } else {
-                echo "vendor is not hp"
-            }
-            
-           
-}  
+          if (hwv.trim().equals("hp")) {}
+		  if (hwv.trim().equals("dell")) { 
+		      echo "vendor is dell"
+		      withCredentials([string(credentialsId: 'consolep', variable: 'password')],) {
+		          sh """
+		          echo ${password} | /usr/local/ariba/bin/dellsp console.${host} reset
+		          echo ${password} | /usr/local/ariba/bin/dellsp console.${host} status
+		         		          """
+		          
+		      }
+		  }
+          if (hwv.trim().equals("sun")) { }
+		  if (hwv.trim().equals("seamicro")) {
+		      echo "vendor is seamicro"
+				touch file: 'seamicroslot', timestamp: 0
+				
+						sh """
+				cat /home/C5267086/ariba/services/operations/machinedb/lab1.ariba.com/${host} | grep -i "seamicroServerSlot" | cut -d\':\' -f2 | tr -d \'  \' > seamicroslot
+				"""
+				def sms = readFile 'seamicroslot'
+			withCredentials([string(credentialsId: 'consolep', variable: 'password')]) {
 
-              
+	          def remote = [:]
+  remote.name = 'web'
+  remote.host = console.${host}
+  remote.user = 'admin'
+  remote.password = "${password}"
+  remote.allowAnyHosts = true
+  stage('Remote SSH') {
+  
+    sshCommand remote: remote, command: "enable; reset server ${sms}"
+
+    
+				}
+			}
+          }
+
+}
+stage('JIRA') {
+    sh """
+    sleep 10m
+    """
+    def host = params.hostname
+    def t = params.ticket
+    touch file: 'ping_output', timestamp: 0
+    sh """
+    
+    ping -c 2 ${host} > ping_output
+    """
+    def pop = readFile 'ping_output'
+   def issue = jiraAddComment comment: "${pop}", idOrKey: "${t}", site: 'jira_ariba'
+
     }
-    
-    
+}
