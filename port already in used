@@ -8,14 +8,14 @@ node('master') {
    properties([
      parameters([
        stringParam(defaultValue: 'web33.lab1', description: 'isFoo should be false', name: 'hostname'),
-       stringParam(defaultValue: 'svcload3', description: 'isFoo should be false', name: 'us'),
+       stringParam(defaultValue: 'svcload3', description: 'isFoo should be false', name: 'username'),
        stringParam(defaultValue: 'ows', description: 'isFoo should be false', name: 'product'),
        stringParam(defaultValue: 'Alabaster-98', description: 'isFoo should be false', name: 'build'),
                        ])
           ])
           
    def host = params.hostname
-   def user = params.us
+   def user = params.username
    def products = params.product
    def builds = params.build
    
@@ -32,7 +32,7 @@ node('master') {
   remote.allowAnyHosts = true
   stage('Remote SSH') {
   
-    sshCommand remote: remote, command: "ps aux | grep -i /home/${user}/${products}/${builds}/bin  | grep -v grep  | awk '{print \$2}' | xargs  kill -9 ; echo \$? > /tmp/2  "
+    sshCommand remote: remote, command: "ps aux | grep -i /home/${user}/${products}/${builds}/bin  | grep -v grep  | awk '{print \$2}' | xargs -r kill -9 ; echo \$? > /tmp/2;ps aux | grep -i /home/${user}/${products}/${builds}/bin  | grep -v grep  | wc -l  "
   
 
    
