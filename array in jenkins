@@ -1,0 +1,32 @@
+  pipeline {
+    agent any
+    stages {
+        stage("robot test") {
+            steps {
+                script {
+                    
+                    MYLIST = [1, 2, 3, 4, 5]
+                //    MYLIST += "param-one"
+                  //  MYLIST += "param-two"
+                //    MYLIST += "param-three"
+                //    MYLIST += "param-four"
+                 //   MYLIST += "param-five"
+
+                    for (def element = 0; element < MYLIST.size(); element++) {
+                        
+                            parameters: [
+                                
+                                    $class: 'StringParameterValue',
+                                    name: 'MYLIST',
+                                    value: MYLIST[element]
+                                ]
+                            
+                echo "hostname ${MYLIST[element]}"        
+                    }
+                
+                    
+                }
+            }
+        }
+    }
+}
