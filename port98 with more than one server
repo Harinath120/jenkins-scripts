@@ -1,0 +1,24 @@
+node('hydra') {
+     
+   properties([parameters([stringParam(defaultValue: '3', description: 'number of hosts', name: 'hc'),])])
+    def c = params.hc
+    stage('test'){
+        def hostname = []
+        echo " count: ${c}"
+        def al = hostname.size()
+        echo "array size ${al}"
+    if( "${c}" == "${al}" ) {echo "finished"}
+        else {
+            echo "not matched"
+        def ui = input message: '', parameters: [string(defaultValue: 'web20', description: '', name: 'hostadd', trim: true)]
+        echo "input value: ${ui}"
+        
+    hostname << "${ui}"
+    println hostname
+        }
+
+
+                
+
+    }
+}
