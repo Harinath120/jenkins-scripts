@@ -1,3 +1,27 @@
+
+package org.hidetake.groovy.ssh.session
+import groovy.transform.CompileStatic
+
+node('hydra') {
+    stage('1') {
+        properties([parameters([stringParam(defaultValue: '', description: 'hostnames', name: 'hosts'),])])
+        def theURL = params.hosts
+        def pieces = theURL.split(',')
+     //   println 'theURL is: ' + theURL + '\n'
+        println 'tokenizedURL: ' + pieces + '\n'       
+      //  echo "array0: ${pieces[0]}"
+    //    echo "array1: ${pieces[1]}"
+     //   echo "array2: ${pieces[2]}"
+        println pieces.length
+        for (def i=0; i < pieces.size(); i++) {   
+                echo "${pieces[i]}"
+        }
+    }
+}
+
+
+....................................................................................................
+                              By using script pipeline (DSL) - no errors but script not completed
 node('hydra') {
      
    properties([parameters([stringParam(defaultValue: '3', description: 'number of hosts', name: 'hc'),])])
@@ -24,7 +48,7 @@ node('hydra') {
 }
 
 ................................................................................................................................
-Declarative pipeline
+                         By using Declarative pipeline - No errors but script not completed
      
 //    if ( "${params.hc}" != "${hostname.size()}" ) { }
 pipeline {
