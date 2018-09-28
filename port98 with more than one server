@@ -1,10 +1,26 @@
 
+...........................................................................................................
+                        port98 issue with multi hosts - success code
+                        
 package org.hidetake.groovy.ssh.session
 import groovy.transform.CompileStatic
 
 node('hydra') {
     stage('1') {
-        properties([parameters([stringParam(defaultValue: '', description: 'hostnames', name: 'hosts'),])])
+        properties([parameters([stringParam(defaultValue: 'web20.lab1.ariba.com,web22.lab1.ariba.com,web23.lab1.ariba.com,web24.lab1.ariba.com', description: 'hostnames', name: 'hosts'),
+		stringParam(defaultValue: 'svcload3', description: 'isFoo should be false', name: 'username'),
+       stringParam(defaultValue: 'ows', description: 'isFoo should be false', name: 'product'),
+       stringParam(defaultValue: 'Alabaster-98', description: 'isFoo should be false', name: 'build'),
+		
+		])])
+		
+	//	def hosts = params.hostname
+   def user = params.username
+   def products = params.product
+   def builds = params.build
+   
+   echo "hostsdetails: ${hosts} username: ${user} product: ${products} build: ${builds}"
+   
         def theURL = params.hosts
         def pieces = theURL.split(',')
      //   println 'theURL is: ' + theURL + '\n'
@@ -14,11 +30,21 @@ node('hydra') {
      //   echo "array2: ${pieces[2]}"
         println pieces.length
         for (def i=0; i < pieces.size(); i++) {   
-                echo "${pieces[i]}"
+		
+                echo "hostname: ${pieces[i]}"
+				def remote = [:]
+  remote.name = 'web'
+  remote.host = "${pieces[i]}"
+  remote.user = "${user}"
+  remote.password = 'k@b@di$vcdev'
+  remote.allowAnyHosts = true
+    sshCommand remote: remote, command: "hostname;id;ps aux | grep -i /home/${user}/${products}/${builds}/bin | wc -l"
+//	| grep -v grep  | awk '{print \$2}' | xargs -r kill -9 ; echo \$? > /tmp/2;ps aux | grep -i /home/${user}/${products}/${builds}/bin  | grep -v grep  | wc -l  "
+  
         }
     }
-}
-
+    
+    }
 
 ....................................................................................................
                               By using script pipeline (DSL) - no errors but script not completed
