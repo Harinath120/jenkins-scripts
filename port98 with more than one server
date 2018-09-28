@@ -22,3 +22,38 @@ node('hydra') {
 
     }
 }
+
+................................................................................................................................
+Declarative pipeline
+     
+//    if ( "${params.hc}" != "${hostname.size()}" ) { }
+pipeline {
+     agent { label 'hydra'}
+     environment {
+        
+        al = 'hostname.size()'
+     }
+    parameters {
+        string(defaultValue: "3", description: 'What environment?', name: 'hc')
+     string(defaultValue: "3", description: 'What environment?', name: 'hc1')
+    }
+    stages {
+        stage("robot test") {
+            steps {
+                print params.hc     
+                script {
+                    hostname = ["1"]
+                if ( "${params.hc}" != "${hostname.size()}" ) {
+                    for (def element = 0; element < hostname.size(); element++) {
+                            echo "${element} ${hostname.size()}"
+                           
+                            echo "${hostname.size()}"
+                        }
+                     hostname += "hai"
+                                  }
+                
+                }
+            }
+        }
+    }
+}
