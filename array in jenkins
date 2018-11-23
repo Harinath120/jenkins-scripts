@@ -6,7 +6,7 @@
                 script {
                     
                     MYLIST = [1, 2, 3, 4, 5]
-                //    MYLIST += "param-one"
+                //    MYLIST += "auth"
                   //  MYLIST += "param-two"
                 //    MYLIST += "param-three"
                 //    MYLIST += "param-four"
